@@ -63,7 +63,8 @@ int main(int argc, char* argv[])
 	if(mode == "-d"){
 		
 		int size =  data.size()/2;
-		char* datarawbuf = new char[size/2];
+		char* datarawbuf = new char[size+ 1] ;
+		memset(datarawbuf, 0, size+ 1);
 		
 		const char* pdata = data.c_str();
 
@@ -71,7 +72,7 @@ int main(int argc, char* argv[])
 		{
 			char tmp[3] = {0};
 			strncpy(tmp, &(pdata[i*2]), 2);
-			
+
 			datarawbuf[i] = strtol(tmp, 0, 16);
 
 		}
