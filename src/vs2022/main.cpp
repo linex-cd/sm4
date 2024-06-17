@@ -6,8 +6,8 @@
 void test()
 {
 		
-	std::string key = "XXXXX*y@%XXXXXXX";
-	std::string data = "helloworldhelloworldhelloworldhelloworldhelloworld";
+	std::string key = "KKUDA*y@%iO5b1mp";
+	std::string data = "172.20.96.92:5500 303557120 280843 high";
 
     sm4 s;
     s.setType(sm4::ECB);
@@ -22,8 +22,9 @@ void test()
 		//std::cout << std::hex << (int)result[i];
 		printf("%02x", (unsigned char)result[i]);
 	}
-
+	printf("\n=========\n");
     //std::cout << s.decrypt(s.encrypt(data)) << std::endl;
+    std::cout << s.decrypt(result) << std::endl;
 
     //ECB模式同上, 只是不需要设置IV
 
@@ -36,6 +37,8 @@ int main(int argc, char* argv[])
 	if (argc < 3)
 	{
 		std::cout << "[only support ECB] usage: sm4.exe -e|-d $key $data" << std::endl;
+		//test();
+		return 0;
 		
 	}
 
@@ -48,15 +51,15 @@ int main(int argc, char* argv[])
     s.setKey(key);
     s.setIv(key);
 
-	
+
 	if(mode == "-e"){
-		 std::string result = s.encrypt(data);
-	
+		std::string result = s.encrypt(data);
+
 		for (int i = 0; i < result.size(); i++)
 		{
-			//std::cout << std::hex << (int)result[i];
 			printf("%02x", (unsigned char)result[i]);
 		}
+
 
 	}
 	
@@ -72,14 +75,14 @@ int main(int argc, char* argv[])
 		{
 			char tmp[3] = {0};
 			strncpy(tmp, &(pdata[i*2]), 2);
-
+			
 			datarawbuf[i] = strtol(tmp, 0, 16);
-
+			//printf("tmp %d=%s raw = %ld\n", i, tmp, datarawbuf[i] );
 		}
 		
 		
 		std::string dataraw;
-		dataraw.assign(datarawbuf);
+		dataraw.assign(datarawbuf, size);
 		
 	
 		std::cout << s.decrypt(dataraw) << std::endl;

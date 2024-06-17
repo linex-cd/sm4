@@ -328,9 +328,9 @@ void sm4::setType(sm4::Type t) {
 }
 
 std::string sm4::encrypt(const std::string &data) {
-    if (key.size() != 16 || iv.size() != 16 || data.empty())
+    if (key.size() != 16 || iv.size() != 16 || data.empty()) {
         return std::string();
-
+	}
     unsigned char _key[16] = {0};
     memcpy(_key, key.data(), 16);
 
@@ -342,7 +342,7 @@ std::string sm4::encrypt(const std::string &data) {
     length = (length / 16 + 1) * 16;
 
     unsigned char* input = new unsigned char[length];
-    memset(input, length - data.size(), length);
+    memset(input, 0, length);
     memcpy(input, data.data(), data.size());
 
     unsigned char* output = new unsigned char[length];
@@ -359,13 +359,18 @@ std::string sm4::encrypt(const std::string &data) {
 
     std::string ret;
     ret.assign((const char *) output, length);
+	
+	delete [] input;
+	delete [] output;
+	
     return ret;
 }
 
 std::string sm4::decrypt(const std::string &data) {
     if (key.size() != 16 || iv.size() != 16 || data.size() < 16)
+    {
         return std::string();
-
+	}
     int length = data.size();
 
     unsigned char _key[16] = {0};
@@ -374,10 +379,11 @@ std::string sm4::decrypt(const std::string &data) {
     unsigned char _iv[16] = {0};
     memcpy(_iv, iv.data(), 16);
 
-   unsigned char* input = new unsigned char[length];
-    memcpy(input, data.data(), length);
+    unsigned char* input = new unsigned char[length];
+	memset(input, 0, length);
+    memcpy(input, data.data(), data.size());
 
-   unsigned char* output = new unsigned char[length];
+    unsigned char* output = new unsigned char[length];
     memset(output, 0, length);
 
     sm4_context ctx;
@@ -388,12 +394,21 @@ std::string sm4::decrypt(const std::string &data) {
         sm4_crypt_cbc(&ctx, 0, length, _iv, input, output);
     }
 
+
     length = length - (int) output[length - 1];
-    if (length < 0)
-        return std::string();
+    if (length < 0){
+		return std::string();
+	}
+        
+
 
     std::string ret;
-    ret.assign((const char *) output, length);
+    //ret.assign((const char *) output, length);
+    ret.assign((const char *) output, strlen((const char *)output));
+	
+	delete [] input;
+	delete [] output;
+	
     return ret;
 }
 
